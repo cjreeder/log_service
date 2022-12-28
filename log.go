@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/labstack/gommon/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -31,8 +30,8 @@ func init() {
 		panic(err)
 	}
 
-	Log = log.Sugar()
-	Log.Info("Logging Service has Started....")
+	L = log.Sugar()
+	L.Info("Logging Service has Started....")
 
 }
 
@@ -48,7 +47,7 @@ func SetLevel(level string) err {
 	case "error":
 		atom.SetLevel(zapcore.ErrorLevel)
 	default:
-		return log.Errorf("Invalid Level")
+		return L.Errorf("Invalid Level")
 	}
 
 	return nil
@@ -66,24 +65,24 @@ func GetLevel() (string, err) {
 func SetLogLevel(g *gin.Context) error {
 	level := g.Param("level")
 
-	Log.Infof("Setting log level to %s", level)
+	L.Infof("Setting log level to %s", level)
 	err := SetLevel(level)
 	if err != nil {
 		return g.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	Log.Infof("Log level set to %s", level)
+	L.Infof("Log level set to %s", level)
 	return g.JSON(http.StatusOK, "ok")
 }
 
 func GetLogLevel(g gin.Context) error {
-	Log.Infof("Getting log level.....")
+	L.Infof("Getting log level.....")
 	level, err := GetLevel()
 	if err != nil {
 		return g.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	Log.Infof("Log level is %s", level)
+	L.Infof("Log level is %s", level)
 
 	m := make(map[string]string)
 	m["log-level"] = level
