@@ -16,8 +16,7 @@ var cfg zap.Config
 var atom zap.AtomicLevel
 
 func init() {
-	fmt.Println("vim-go")
-	atom = zap.NewAtomicLevelAt(zapcore.WarnLevel)
+	atom = zap.NewAtomicLevelAt(zapcore.InfoLevel)
 
 	cfg = zap.NewDevelopmentConfig()
 
