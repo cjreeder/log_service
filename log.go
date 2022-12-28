@@ -1,6 +1,7 @@
 package log
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -10,7 +11,7 @@ import (
 )
 
 // Setting up variables for logging
-var Log *zap.SugaredLogger
+var L *zap.SugaredLogger
 var cfg zap.Config
 var atom zap.AtomicLevel
 
@@ -36,7 +37,7 @@ func init() {
 }
 
 // SetLevel allows for setting the log level on the fly
-func SetLevel(level string) err {
+func SetLevel(level string) error {
 	switch level {
 	case "debug":
 		atom.SetLevel(zapcore.DebugLevel)
@@ -47,7 +48,7 @@ func SetLevel(level string) err {
 	case "error":
 		atom.SetLevel(zapcore.ErrorLevel)
 	default:
-		return L.Errorf("Invalid Level")
+		return errors.New("Invalid Level")
 	}
 
 	return nil
@@ -57,29 +58,29 @@ func SetLevel(level string) err {
 // GetLevel allows for getting the current logging level
 // Do we want to catch an error here and return it???????
 // If not, let's not add an error return
-func GetLevel() (string, err) {
+func GetLevel() (string, error) {
 	return atom.Level().String(), nil
 }
 
 // Handlers for settings and getting the logs
-func SetLogLevel(g *gin.Context) error {
+func SetLogLevel(g gin.Context) {
 	level := g.Param("level")
 
 	L.Infof("Setting log level to %s", level)
 	err := SetLevel(level)
 	if err != nil {
-		return g.JSON(http.StatusBadRequest, err.Error())
+		g.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	L.Infof("Log level set to %s", level)
-	return g.JSON(http.StatusOK, "ok")
+	g.JSON(http.StatusOK, "ok")
 }
 
-func GetLogLevel(g *gin.Context) error {
+func GetLogLevel(g gin.Context) {
 	L.Infof("Getting log level.....")
 	level, err := GetLevel()
 	if err != nil {
-		return g.JSON(http.StatusBadRequest, err.Error())
+		g.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	L.Infof("Log level is %s", level)
@@ -87,5 +88,5 @@ func GetLogLevel(g *gin.Context) error {
 	m := make(map[string]string)
 	m["log-level"] = level
 
-	return g.JSON(http.StatusOK, m)
+	g.JSON(http.StatusOK, m)
 }
