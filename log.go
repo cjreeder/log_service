@@ -26,7 +26,7 @@ func init() {
 
 	log, err := cfg.Build()
 	if err != nil {
-		log.Printf("Error Building zap log configuration: %v", err.Error())
+		fmt.Errorf("Error Building zap log configuration: %v", err.Error())
 		panic(err)
 	}
 
@@ -75,7 +75,7 @@ func SetLogLevel(g *gin.Context) error {
 	return g.JSON(http.StatusOK, "ok")
 }
 
-func GetLogLevel(g gin.Context) error {
+func GetLogLevel(g *gin.Context) error {
 	L.Infof("Getting log level.....")
 	level, err := GetLevel()
 	if err != nil {
