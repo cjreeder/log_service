@@ -62,7 +62,7 @@ func GetLevel() (string, error) {
 }
 
 // Handlers for settings and getting the logs
-func SetLogLevel(g gin.Context) {
+func SetLogLevel(g *gin.Context) {
 	level := g.Param("level")
 
 	L.Infof("Setting log level to %s", level)
@@ -75,7 +75,7 @@ func SetLogLevel(g gin.Context) {
 	g.JSON(http.StatusOK, "ok")
 }
 
-func GetLogLevel(g gin.Context) {
+func GetLogLevel(g *gin.Context) {
 	L.Infof("Getting log level.....")
 	level, err := GetLevel()
 	if err != nil {
